@@ -20,20 +20,65 @@ string toUpperStr(string x){
     return y;
 }
 
-void importDataFromFile(){
+void importDataFromFile(string filename, vector<string>&names, vector<int>&score, vector<char>&grade){
+// เปิดไฟล์
+ifstream file;
+file.open(filename);
 
+string textline;
+ // อ่านแต่ละบรรทัดจากไฟล์จนกว่าจะถึงสิ้นสุดของไฟล์
+while(getline(file,textline)){
+    char format[] = "%[^:]: %d %d %d";
+    char name[100]; // สมมติว่าชื่อจะไม่เกิน 100 ตัวอักษร
+    int a,b,c;
+    sscanf(textline.c_str(),format,name,&a,&b,&c);
+    // เก็บข้อมูลที่แยกออกมา
+    names.push_back(name); // เก็บชื่อ
+    score.push_back((a + b + c)); // คำนวณและเก็บคะแนนรวม
+    char x = score2grade(a + b + c); // คำนวณและเก็บเกรดตามคะแนนรวมโดยใช้ฟังก์ชัน score2grade
+    grade.push_back(x); // เก็บเกรด
+}
+file.close();
 }
 
-void getCommand(){
+void getCommand(string &command, string &key){
+cout << "Please input your command: ";
+cin >> command;
 
+if(toUpperStr(command)== "GRADE" || toUpperStr(command)== "NAME"){
+    cin.ignore();
+    getline(cin,key);
+}
 }
 
-void searchName(){
-
+void searchName(vector<string>names, vector<int>scores, vector<char>grades, string key){
+int n = 0;
+cout << "---------------------------------" << endl;
+for(unsigned int i = 0; i<names.size(); i++){
+    if(key == toUpperStr(names[i])){
+        cout << names[i] << "'s score = "<< scores[i] << endl;
+        cout << names[i] << "'s grade = "<< grades[i] << endl;
+        n++;
+    }else if(i == names.size()-1 && n == 0){
+        cout << "Cannot found."<< endl;
+    }
+}
+    cout << "---------------------------------" << endl;
 }
 
-void searchGrade(){
-
+void searchGrade(vector<string> names, vector<int> scores, vector<char> grades, string key){
+    int n = 0;
+    cout << "---------------------------------" << endl;
+    for(unsigned int i=0;i<names.size();i++){
+        if(*key.c_str() == grades[i]){
+            cout << names[i] << " (" << scores[i] << ")" << endl;
+            n++;
+        }
+    }
+    if (n == 0) {
+        cout << "Cannot found." << endl;
+    }
+    cout << "---------------------------------" << endl;
 }
 
 
